@@ -1,20 +1,20 @@
 function secondLargest(array) {
  
-  for(var i=0;i<array.length;i++)
+  for(var iter=0;iter<array.length;iter++)
     {
-        for(j=0;j<array.length-i-1;j++)
+        for(var sec_iter=0;sec_iter<array.length-iter-1;sec_iter++)
           {
-              if(array[j]>array[j+1])
+              if(array[sec_iter]>array[sec_iter+1])
                 {
-                  temp=array[j];
-                  array[j]=array[j+1];
-                  array[j+1]=temp;
+                  temp=array[sec_iter];
+                  array[sec_iter]=array[sec_iter+1];
+                  array[sec_iter+1]=temp;
                 }
           }
     }
-  for(i=array.length-1;i>=1;i--)
+  for(iter=array.length-1;iter>=1;iter--)
     {
-      if(array[i]!=array[i-1])
-          return array[i-1];
+      if(array[iter]!=array[iter-1])
+          return array[iter-1];
     }
 }

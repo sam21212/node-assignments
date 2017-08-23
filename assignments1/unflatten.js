@@ -1,12 +1,12 @@
 function merge(ans,arr,val)
 {
 	var len=arr.length-1;
-	for(var i=0;i<len;i++)
+	for(var iter=0;iter<len;iter++)
 	{
-		var key=arr[i];
+		var key=arr[iter];
 		if(!(key in ans))
 		{
-			if(arr[i+1]>='0'&&arr[i+1]<='9')
+			if(arr[iter+1]>='0'&&arr[iter+1]<='9')
 				ans[key]=[];
 			else
 				ans[key]={};
@@ -17,11 +17,11 @@ function merge(ans,arr,val)
 }
 function unflatten(flatObject) {
 	var ans={};
-  for(var i in flatObject)
+  for(var key in flatObject)
   {
   	    var arr=[];
-  		arr=i.split('.');
-        merge(ans,arr,flatObject[i]);
+  		arr=key.split('.');
+        merge(ans,arr,flatObject[key]);
   }
   return ans;
 }
