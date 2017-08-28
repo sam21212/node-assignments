@@ -1,16 +1,11 @@
 function calculateFrequency(string) {
-  
-  var freq={};
-  for(var iter=0;iter<string.length;iter++)
-    {
-         var ch=string.charAt(iter);
-      if(ch>='a'&&ch<='z')
-        {
-         if(freq[ch])
-            freq[ch]++;
-        else
-            freq[ch]=1;
-        }
+  var frequency = {};
+  for (var iter = 0; iter < string.length; iter++) {
+    var character = string.charAt(iter);
+    if (character >= "a" && character <= "z") {
+      if (frequency[character]) frequency[character]++;
+      else frequency[character] = 1;
     }
-  return freq;
+  }
+  return frequency;
 }
