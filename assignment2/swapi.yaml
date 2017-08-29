@@ -1,0 +1,322 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: Star API
+  description: A simple API to learn how to write OpenAPI Specification
+
+schemes:
+  - https
+host: swapi.co
+basePath: /api
+paths:
+  /people:
+    get:
+      description: List of people worked in star wars
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/People"
+  /people/{person_id}:
+    get:
+      parameters:
+      - in: path
+        name: person_id
+        description: Information of actors in star wars
+        required: true
+        type: integer
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/People"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Person not found"
+  /people/schema:
+    get:
+      description: view the JSON schema for this resource
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/PeopleSchema"
+  /films:
+    get:
+      description: Infromation of films of star wars
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/films"    
+  /films/{film_id}:
+    get:
+      parameters:
+      - in: path
+        name: film_id
+        required: true
+        type: integer
+        description: Information of films of star wars
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/films"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Film not found"
+  /films/schema:
+    get:
+      description: Infromation of films of star wars
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/filmschema"  
+definitions:
+  People:
+    required: [
+        "name",
+        "height",
+        "mass",
+        "hair_color",
+        "skin_color",
+        "eye_color",
+        "birth_year",
+        "gender",
+        "homeworld",
+        "films",
+        "species",
+        "vehicles",
+        "starships",
+        "url",
+        "created",
+        "edited"
+    ]
+    properties: {
+        gender: {
+            type: "string",
+            description: "The gender of this person (if known)."
+        },
+        species: {
+            type: "array",
+            description: "The url of the species resource that this person is."
+        },
+        skin_color: {
+            type: "string",
+            description: "The skin color of this person."
+        },
+       mass: {
+            type: "string",
+            description: "The mass of this person in kilograms."
+        },
+        vehicles: {
+            type: "array",
+            description: "An array of vehicle resources that this person has piloted"
+        },
+        height: {
+            type: "string",
+            description: "The height of this person in meters."
+        },
+        starships: {
+            type: "array",
+            description: "An array of starship resources that this person has piloted"
+        },
+        name: {
+            type: "string",
+            description: "The name of this person."
+        },
+        edited: {
+            description: "the ISO 8601 date format of the time that this resource was edited.",
+            type: "string",
+            format: "date-time"
+        },
+        films: {
+            type: "array",
+            description: "An array of urls of film resources that this person has been in."
+        },
+        eye_color: {
+            type: "string",
+            description: "The eye color of this person."
+        },
+        created: {
+            description: "The ISO 8601 date format of the time that this resource was created.",
+            type: "string",
+            format: "date-time"
+        },
+        homeworld: {
+            type: "string",
+            description: "The url of the planet resource that this person was born on."
+        },
+        hair_color: {
+            type: "string",
+            description: "The hair color of this person."
+        },
+        birth_year: {
+            type: "string",
+            description: "The birth year of this person. BBY (Before the Battle of Yavin) or ABY (After the Battle of Yavin)."
+        },
+        url: {
+            description: "The url of this resource",
+            type: "string",
+            format: "uri"
+        }
+    }
+  PeopleSchema:
+    type: object
+    properties: {
+        gender: {
+            type: "string",
+        },
+        species: {
+            type: "array",
+        },
+        skin_color: {
+            type: "string",
+        },
+       mass: {
+            type: "string",
+        },
+        vehicles: {
+            type: "array",
+        },
+        height: {
+            type: "string",
+        },
+        starships: {
+            type: "array",
+        },
+        name: {
+            type: "string",
+        },
+        edited: {
+            type: "string",
+            format: "date-time"
+        },
+        films: {
+            type: "array",
+        },
+        eye_color: {
+            type: "string",
+        },
+        created: {
+            type: "string",
+            format: "date-time"
+        },
+        homeworld: {
+            type: "string"
+        },
+        hair_color: {
+            type: "string"
+        },
+        birth_year: {
+            type: "string"
+        },
+        url: {
+            type: "string",
+            format: "uri"
+        }
+    }
+  films:
+    required:
+      - title
+      - episode_id
+      - opening_crawl
+      - director
+      - producer
+      - release_date
+      - characters
+      - planets
+      - starships
+      - vehicles
+      - species
+      - url
+      - created
+      - edited
+    properties:
+      species:
+        description: The species resources featured within this film.
+        type: array
+      characters:
+        description: The people resources featured within this film.
+        type: array
+      starships:
+        description: The starship resources featured within this film.
+        type: array
+      opening_crawl:
+        description: The opening crawl text at the beginning of this film.
+        type: string
+      created:
+        format: date-time
+        type: string
+        description: The ISO 8601 date format of the time that this resource was created.
+      release_date:
+        format: date
+        type: string
+        description: The release date at original creator country.
+      producer:
+        description: The producer(s) of this film.
+        type: string
+      episode_id:
+        description: The episode number of this film.
+        type: integer
+      planets:
+        description: The planet resources featured within this film.
+        type: array
+      title:
+        description: The title of this film.
+        type: string
+      url:
+        format: uri
+        type: string
+        description: The url of this resource
+      director:
+        description: The director of this film.
+        type: string
+      edited:
+        format: date-time
+        type: string
+        description: the ISO 8601 date format of the time that this resource was edited.
+      vehicles:
+        description: The vehicle resources featured within this film.
+        type: array
+    description: A Star Wars film
+    title: Film
+    type: object
+  filmschema:
+    type: object
+    properties:
+      species:
+        type: array
+      characters:
+        type: array
+      starships:
+        type: array
+      opening_crawl:
+        type: string
+      created:
+        format: date-time
+        type: string
+      release_date:
+        format: date
+        type: string
+      producer:
+        type: string
+      episode_id:
+        type: integer
+      planets:
+        type: array
+      title:
+        type: string
+      url:
+        format: uri
+        type: string
+      director:
+        type: string
+      edited:
+        format: date-time
+        type: string
+      vehicles:
+        type: array
