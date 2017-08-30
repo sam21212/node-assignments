@@ -1,7 +1,4 @@
-File 2 Start here
-
-
-HOME WORTH A LOOK CSS NETWORK E-BOOKS
+File 2 Start hereHOME WORTH A LOOK CSS NETWORK E-BOOKS
 
 
 Callback Functions in JavaScript
