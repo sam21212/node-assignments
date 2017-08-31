@@ -1,12 +1,12 @@
-exports.secondLargest=function(array) {
+exports.secondLargest = function(array) {
   var len = array.length,
     max = array[0],
-    second_max = -1;
-  for (var iter = 1; iter < len; iter++) {
-    if (array[iter] > max) {
-      second_max = max;
-      max = array[iter];
-    } else if (array[iter] > second_max) second_max = array[iter];
+    secondMax = -1;
+  for (var iteration = 1; iteration < len; iteration++) {
+    if (array[iteration] > max) {
+      secondMax = max;
+      max = array[iteration];
+    } else if (array[iteration] > secondMax) secondMax = array[iteration];
   }
-  return second_max;
+  return secondMax;
 };
