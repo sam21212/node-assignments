@@ -12,10 +12,7 @@ module.exports = function(app) {
 
   app.post("/api/projects", function(req, res) {
     Project.addProject(req.body, function(err, project) {
-      if (err) {
-        res.status(400).json(Project.schema.obj);
-        return errorHandler.getMessage(err, req, res);
-      }
+      if (err) res.status(400).json(Project.schema.obj);      
       res.status(200).json(project);
     });
   });
@@ -33,10 +30,7 @@ module.exports = function(app) {
       if (err) return errorHandler.getMessage(err, req, res);
       project.set(req.body);
       project.save(function(err) {
-        if (err) {
-          res.status(400).json(Project.schema.obj);
-          return errorHandler.getMessage(err, req, res);
-        }
+        if (err) res.status(400).json(Project.schema.obj);
         res.status(200).json({ Message: "updated Succesfully" });
       });
     });
