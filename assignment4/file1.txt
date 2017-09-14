@@ -1,0 +1,1049 @@
+HOME WORTH A LOOK CSS NETWORK E-BOOKS
+
+
+Callback Functions in JavaScript
+By Louis Lazaris on February 14th, 2012 | 98 Comments
+Callback Functions in JavaScriptIf you’re fairly inexperienced with JavaScript but you’ve used jQuery, then its likely you’ve used callback functions. But maybe you don’t fully understand how they work or how they’re implemented.
+
+In this post, which is based on what I’ve learned about callback functions, I’ll try to enlighten you on this fairly common JavaScript technique. If you have anything to add, feel free to post a comment.
+
+What is a Callback Function?
+The above-linked Wikipedia article defines it nicely:
+
+A reference to executable code, or a piece of executable code, that is passed as an argument to other code.
+
+Here’s a simple example that’s probably quite familiar to everyone, taken from jQuery:
+
+$('#element').fadeIn('slow', function() {
+    // callback function
+});
+This is a call to jQuery’s fadeIn() method. This method accepts two arguments: The speed of the fade-in and an optional callback function. In that function you can put whatever you want.
+
+When the fadeIn() method is completed, then the callback function (if present) will be executed. So, depending on the speed chosen, there could be a noticeable delay before the callback function code is executed. You can read more about jQuery’s callback functions here.
+
+How to Write a Callback Function
+If you’re writing your own functions or methods, then you might come across a need for a callback function. Here’s a very simple example of a custom callback function:
+
+function mySandwich(param1, param2, callback) {
+    alert('Started eating my sandwich.\n\nIt has: ' + param1 + ', ' + param2);
+    callback();
+}
+
+mySandwich('ham', 'cheese', function() {
+    alert('Finished eating my sandwich.');
+});
+Here we have a function called mySandwich and it accepts three parameters. The third parameter is the callback function. When the function executes, it spits out an alert message with the passed values displayed. Then it executes the callback function.
+
+Notice that the actual parameter is just “callback” (without parentheses), but then when the callback is executed, it’s done using parentheses. You can call this parameter whatever you want, I just used “callback” so it’s obvious what’s going on.
+
+The callback function itself is defined in the third argument passed to the function call. That code has another alert message to tell you that the callback code has now executed. You can see in this simple example that an argument passed into a function can be a function itself, and this is what makes callbacks possible in JavaScript.
+
+Here’s a JSBin that uses the simple example above.
+
+Make the Callback Optional
+One thing you’ll notice about jQuery callbacks is that they’re optional. This means if a method accepts a callback, it won’t return an error if a callback is not included. In our simple example, the page will return an error if we call the function without a callback, like this:
+
+function mySandwich(param1, param2, callback) {
+    alert('Started eating my sandwich.\n\nIt has: ' + param1 + ', ' + param2);
+    callback();
+}
+
+mySandwich('ham', 'cheese');
+You can see this in action here. If you open your developer tools, you’ll see an error that says “undefined is not a function” (or something similar) that appears after the initial alert message.
+
+To make the callback optional, we can just do this:
+
+function mySandwich(param1, param2, callback) {
+    alert('Started eating my sandwich.\n\nIt has: ' + param1 + ', ' + param2);
+    if (callback) {
+        callback();
+    }
+}
+
+mySandwich('ham', 'cheese');
+Now, since we’re checking to ensure the existence of callback, the function call won’t cause an error without it. You can test this example here.
+
+Make Sure the Callback is a Function
+Finally, you can ensure that whatever value is passed as the third argument is in fact a proper function, by doing this:
+
+function mySandwich(param1, param2, callback) {
+    alert('Started eating my sandwich.\n\nIt has: ' + param1 + ', ' + param2);
+    if (callback && typeof(callback) === "function") {
+        callback();
+    }
+}
+
+mySandwich('ham', 'cheese', 'vegetables');
+Notice that the function now includes a test using the typeof operator, to ensure that whatever is passed is actually a function. The function call has a third argument passed, but it’s not a function, it’s a string. So the test using typeof ensures no error occurs.
+
+Here’s a JSBin with a nonfunction argument passed as the callback.
+
+A Note About Timing
+Although it is true that a callback function will execute last if it is placed last in the function, this will not always appear to happen. For example, if the function included some kind of asynchronous execution (like an Ajax call or an animation), then the callback would execute after the asynchronous action begins, but possibly before it finishes.
+
+Here’s an example that uses jQuery’s animate method:
+
+function mySandwich(param1, param2, callback) {
+    alert('Started eating my sandwich.\n\nIt has: ' + param1 + ', ' + param2);
+  
+    $('#sandwich').animate({
+        opacity: 0
+    }, 5000, function() {
+        // Animation complete.
+    });
+  
+    if (callback && typeof(callback) === "function") {
+        callback();
+    }
+}
+
+mySandwich('ham', 'cheese', function() { 
+    alert('Finished eating my sandwich.');
+});
+And again here’s that code live.
+
+Notice that although the callback appears later in source order than the animation, the callback will actually execute long before the animation completes. In this case, solving this problem is easy: You just put the callback execution inside the animate method’s callback function (where it says “Animation complete”).
+
+This doesn’t cover all the details regarding asynchronous functions, but it should serve as a basic warning that callback functions will only execute last as long as all the code in the function is synchronous.
+
+Conclusion
+Understanding how a callback function works in JavaScript is a nice technique to have in your JavaScript toolbox. I hope this summary of callbacks helps you to understand this concept better. If you have anything technical to add, feel free to post a comment below.
+
+98 Responses
+Tyron:
+Feb 14/2012 8:24am
+When I need to wait on multiple animates’ calbacks or ajax requests, inside the function that calls the callback (i.e. mySandwich), I tend to use Deferred objects to sync all those timings. I’ve modified your example to include this: http://jsbin.com/ajigan/edit#preview
+
+Reply
+moabi:
+Feb 15/2012 4:58am
+excellent !
+
+Reply
+Mickey:
+May 1/2012 3:02pm
+This deferred thing is another world. I need to read on that! Sounds useful….:S
+
+Reply
+Tyler:
+Jan 15/2013 11:21pm
+Ya my head just exploded… thanks for opening this window.
+
+Reply
+Jeroen Ransijn:
+Feb 14/2012 12:25pm
+This should also work.
+
+(callback && typeof(callback) === "function") && callback();
+Reply
+CallBack:
+Nov 15/2012 9:28pm
+Why complicating…?
+
+Reply
+Louis Lazaris:
+Nov 16/2012 3:10am
+I agree. Some people find that type of notation clear, but I don’t. I like to be able to read what something does almost instantly, and that syntax just doesn’t work for me. But I know it does for some people, so that’s their preference, no problem
+
+Reply
+call:
+Sep 5/2013 3:55am
+Seems just a cool suggestion, so use it if you like it
+
+Reply
+Jack Scotty:
+Nov 22/2013 8:19pm
+I agree, just seems to complicate things really. But, again, I agree… it’s a personal preference.
+
+Reply
+Javid:
+Mar 16/2013 2:39pm
+Does it solve any specific purpose. I think more writing causes more typos and hence more bugs. Please add if it helps more, other than as mentioned in Original Post.
+
+Reply
+Calvin:
+Sep 16/2014 1:20pm
+My oh my… Don’t ever write these kinds of codes. Sure this one liner makes sense because it’s condensing a simple logic. If you condense more complicated logic, many people will not know what you were trying to do, and along the way you might even forget.
+
+Reply
+Jamie:
+Feb 14/2012 4:39pm
+Great write up mate, long time javascript user but never actually figured out how callback methods worked, only recently have I needed to write my own custom callbacks!
+
+Reply
+Fredrik:
+Feb 15/2012 2:46am
+Awesome. Was thinkin’ about this just the other day.
+
+Reply
+Dean Pugh:
+Feb 15/2012 4:17am
+I’ve tried this before when I needed it for another project but never managed to get it working. At the time I could only find examples of people adding callbacks to plugins.
+
+This will come in handy in the future and I have booked marked this page for reference! Thanks for such a simple, yet powerful and useful article.
+
+Reply
+James Newell:
+Feb 15/2012 9:10am
+This is a really good writeup. I like that you include the bit about asynchronous calls because that is something that can be maddening until you first begin to understand the concept at work.
+
+One thing you may want to discuss is using a specific method signature with a callback (more often referred to as a delegate, but basically the same thing) to allow for callbacks that take parameters. For example, to receive a more detailed response about the type of sandwich you could do the following:
+
+function mySandwich(param1, param2, callback) {
+  alert('Started eating my sandwich.\n\nIt has: ' + param1 + ', ' + param2);
+
+  $('#sandwich').animate({
+    opacity: 0
+  }, 5000, function() { 
+    // Animation complete.
+  });
+
+  if (callback && typeof(callback) === "function") {  
+    callback(param1, param2);  
+  }
+}
+
+mySandwich('ham', 'cheese', function(callbackParam1, callbackParam2) {  
+  alert('Finished eating my ' + callbackParam1 + ' & ' + callbackParam2 + ' sandwich.');  
+}); 
+Reply
+Jeremy Hill:
+Feb 20/2012 6:01pm
+I think another good example would be how to run a callback that receives arguments and has ‘this’ set to something other than the global object. i.e.:
+
+function mySandwich(param1, param2, callback) {
+  alert('Started eating my sandwich.\n\nIt has: ' + param1 + ', ' + param2);
+  var sandwich = {toppings: [param1, param2]},
+    madeCorrectly = (typeof(param1) === "string" && typeof(param2) === "string") ? true : false;
+  if (callback && typeof(callback) === "function") {  
+    callback.apply(sandwich, [madeCorrectly]);  
+  }  
+}  
+  
+mySandwich('ham', 'cheese', function(correct) {
+  if (correct) {
+    alert("Finished eating my " + this.toppings[0] + " and " + this.toppings[1] + " sandwich.");
+  } else {
+    alert("Gross!  Why would I eat a " + this.toppings[0] + " and " + this.toppings[1] + " sandwich?");
+  }
+});
+Reply
+Dave Stibrany:
+Mar 31/2012 1:43pm
+Thanks for throwing in an example using call/apply!
+
+Reply
+Javid:
+Mar 16/2013 2:44pm
+Your snippet is the best example to understand how apply works in Javascript Callbacks.
+
+Reply
+Jason Mulligan:
+Mar 1/2012 7:18am
+Under “Make Sure the Callback is a Function” you just need to do this
+
+if (typeof callback === "function") callback();
+Checking if it’s defined & a function is an extra, unneeded step.
+
+Reply
+Charles Halliday:
+Mar 13/2012 1:08am
+Thanks for the post. Already coming up with ideas to use callbacks in my code. Wish I had read this post 2 projects ago, would have saved me some time.
+
+Reply
+Image Tech Solution:
+Mar 13/2012 7:29am
+Great write up mate, long time JavaScript user but never actually figured out how callback methods worked, thanks for shearing!
+
+Reply
+John:
+Jun 15/2012 4:16am
+This looks great and easy. Thanks for the examples. I still have problems implementing it here:
+
+/*
+ * Copyright 2010 Nicholas C. Zakas. All rights reserved.
+ * BSD Licensed.
+ */
+function CrossDomainStorage(origin, path) {
+  this.origin = origin;
+  this.path = path;
+  this._iframe = null;
+  this._iframeReady = false;
+  this._queue = [];
+  this._requests = {};
+  this._id = 0;
+}
+
+CrossDomainStorage.prototype = {
+
+  // restore constructor
+  constructor: CrossDomainStorage,
+
+  // public interface methods
+
+  init: function(){
+
+    var that = this;
+
+    if (!this._iframe){
+      if (window.postMessage && window.JSON && window.localStorage){
+        this._iframe = document.createElement("iframe");
+        this._iframe.style.cssText = "position:absolute;width:1px;height:1px;left:-9999px;";
+        document.body.appendChild(this._iframe);
+
+        if (window.addEventListener){
+          this._iframe.addEventListener("load", function(){ that._iframeLoaded(); }, false);
+          window.addEventListener("message", function(event){ that._handleMessage(event); }, false);
+        } else if (this._iframe.attachEvent){
+          this._iframe.attachEvent("onload", function(){ that._iframeLoaded(); }, false);
+          window.attachEvent("onmessage", function(event){ that._handleMessage(event); });
+        }
+      } else {
+        throw new Error("Unsupported browser.");
+      }
+    }
+
+    this._iframe.src = this.origin + this.path;
+
+  },
+
+  requestValue: function(key, callback){
+    var request = {
+      key: key,
+      id: ++this._id
+    },
+    data = {
+      request: request,
+      callback: callback
+    };
+
+    if (this._iframeReady){
+      this._sendRequest(data);
+    } else {
+      this._queue.push(data);
+    }   
+
+    if (!this._iframe){
+      this.init();
+    }
+  },
+
+  // private methods
+
+  _sendRequest: function(data){
+    this._requests[data.request.id] = data;
+    this._iframe.contentWindow.postMessage(JSON.stringify(data.request), this.origin);
+  },
+
+  _iframeLoaded: function(){
+    this._iframeReady = true;
+
+    if (this._queue.length){
+      for (var i=0, len=this._queue.length; i < len; i++){
+        this._sendRequest(this._queue[i]);
+      }
+      this._queue = [];
+    }
+  },
+
+  _handleMessage: function(event){
+    if (event.origin == this.origin){
+      var data = JSON.parse(event.data);
+      this._requests[data.id].callback(data.key, data.value);
+      delete this._requests[data.id];
+    }
+  }
+
+};
+
+
+var remoteStorage = new CrossDomainStorage("http://somewhere.com", "/server.html");
+remoteStorage.requestValue("something", function(key, value) {
+  alert("The value for '" + key + "' is '" + value + "'");
+});
+
+alert ("I want to access value here! " + value);
+I’ve been told that to use value in alert I need something like a callback but I cannot implant it for this…
+
+Reply
+Rob:
+Jul 16/2012 3:32am
+Don’t use an anonymous function
+
+function(key, value){ alert(“The value for ‘” + key + “‘ is ‘” + value + “‘”); })
+
+but rather a separate stand-alone function
+
+function myAlertFunction(key, value) { alert(“The value for ‘” + key + “‘ is ‘” + value + “‘”); }
+
+which you then call as:
+
+remoteStorage.requestValue(“something”, myAlertFunction(key, value));
+
+Function closure will (should!) guarantee that you see your key/value values.
+
+Reply
+david:
+Jul 23/2012 3:16pm
+Thanks a bunch, very useful article :)
+
+Reply
+Travis Sun:
+Aug 1/2012 2:26pm
+I was just looking for the definition of a callback function and I found this! Awesome post!
+
+Reply
+Louis Lazaris:
+Aug 12/2012 2:29am
+I just found this, which looks quite relevant to this discussion:
+
+http://callbackhell.com/
+
+Reply
+javabeginner1:
+Sep 4/2012 1:59am
+Thanks a lot…
+This post helped me to understand what callback functions are…
+keep up the good work
+
+Reply
+Akshay:
+Sep 17/2012 1:49pm
+I am new to javascript world. This was really helpful. thx.
+
+Reply
+learnerplates (@learnerplts):
+Sep 18/2012 5:13am
+excellent article. Great help to OO developers playing round with JS
+
+Reply
+Tom:
+Oct 8/2012 5:47am
+Thnx! I learned something today :D
+
+Reply
+Zee:
+Oct 13/2012 10:29am
+Fantastic work on breaking this all down Louis.
+
+We’ll be sending our newbie JS developers to this page to help them understand the basics of callbacks!
+
+Reply
+trung:
+Nov 7/2012 8:27pm
+Now, I can use callback in javascript.
+Thanks!
+
+Reply
+Luke:
+Nov 18/2012 2:14pm
+Best write-up about callbacks on the net. Ever. Kudos to you.
+
+This thread tells you why:
+
+http://www.codingforums.com/showthread.php?p=1293028#post1293028
+
+Reply
+Louis Lazaris:
+Nov 18/2012 6:22pm
+Thanks Luke. This page has actually been getting pretty steady traffic via search, and most of the comments here have been pretty positive. Glad everyone likes it.
+
+Reply
+Cesar:
+Dec 10/2012 4:33pm
+Excelent article, it helps me a lot!
+
+Reply
+Louis Lazaris:
+Dec 11/2012 2:36pm
+Much heavier content in this one, but relevant to those considering heavy use of nested callbacks:
+
+http://adamghill.com/2012/12/02/callbacks-considered-a-smell/
+
+Reply
+Javid:
+Mar 16/2013 2:50pm
+Apart from your Post, the best I have seen on callbacks is here”:
+
+http://recurial.com/programming/understanding-callback-functions-in-javascript/
+
+Reply
+Sam Johnson:
+Dec 12/2012 1:45pm
+Much obliged for this. Trying to sort out callbacks from the FileReader object. This article was very helpful for that.
+
+Reply
+Neo An:
+Dec 13/2012 10:18pm
+Simple but clearly and really great!
+Thanks :)
+
+Reply
+ashok:
+Dec 19/2012 2:01am
+short and sweet……thanks
+
+Reply
+Jeffrey van Ham:
+Dec 21/2012 6:44am
+Just what I was looking for! Jquerymobile refresh listview and selectmenu Need a callback function for this after dynamically creating them. Thanks!
+
+Reply
+ABname:
+Jan 7/2013 4:26am
+Extremely Helpful !!
+
+Reply
+Najeeb:
+Jan 18/2013 12:33am
+Perfect was thinking about this lately and you explained it nicely.
+
+Good Job
+
+Reply
+Kunal:
+Jan 21/2013 9:01am
+It was indeed very helpful for a someone like me who is new to js…..
+Many thanks
+
+Reply
+Nan Zhang:
+Feb 2/2013 8:58am
+In javascript, the callback definition you quoted on wikipedia is confusing, I found it gave me the better understanding: “A callback function (in jquery) is executed after the current effect is 100% finished”. in w3schools.
+
+Your callback example is clear and easy to follow, but in practice, it’s the same effect to put all codes in order in a javascript file. For example, I trid to load a css file before showing a form in javascript, I would have the same effect to use callback function you suggested or to put all codes in order without the function. However, the solution is suggested this post “http://stackoverflow.com/questions/950087/include-javascript-file-inside-javascript-file”, binding event onreadystatechange or onload to the callback function. It works for me.
+
+Reply
+Louis Lazaris:
+Feb 3/2013 6:35am
+Yes, you’re right, JS lines will load in order of appearance. However, as I understand things, the new lines that run don’t wait for the previous lines to finish. So in some cases (as in the case of a long animated effect like a fade out), you need a callback to ensure the previous code is completely finished before loading the next line.
+
+So while in some cases you can get away with one line after another, there are other cases where you absolutely need the previous code to finish first, in which case you need a callback.
+
+Reply
+Rick:
+Mar 7/2013 10:10am
+Very easy to understand. Thank you for your informative content.
+
+Reply
+Shan:
+Mar 7/2013 1:19pm
+thanks a lot :)
+
+Reply
+Jack Albright:
+Mar 20/2013 10:47am
+Very helpful post. Thanks a lot. My understanding of Javascript just went up a notch.
+
+Reply
+daniel:
+Mar 27/2013 2:43am
+ 
+
+function thankyou(callback) {
+  alert('thank you!');
+  callback();
+}
+
+thankyou(function() {
+  alert('your the best!');
+});
+Reply
+Chris:
+Apr 11/2013 2:49pm
+One of the best articles I’ve read. I went from being confused about how to create a callback function to understanding the concept fully in about 20 seconds flat. Thanks :)
+
+Reply
+satish:
+Apr 16/2013 12:46am
+Excellent…
+
+Reply
+Shiham:
+Apr 24/2013 12:24am
+Thanks, great information to remind things even if you already read about callback :)
+
+Reply
+Japo Domingo:
+May 2/2013 3:48am
+Thank you. I’m fairly new with both JS and JQuery so before reading this post I found callback functions quite magical. :D I keep forgetting to treat functions as objects/variables as well.
+
+Reply
+Ibrahim Islam:
+May 3/2013 11:18am
+Thanks for this introductory lesson, mate
+
+Reply
+Taiwan:
+May 10/2013 11:10am
+Thank you. Very useful article.
+
+Reply
+Mohammed:
+May 24/2013 2:20am
+Saved my day !
+
+Reply
+vive:
+Jun 12/2013 9:58am
+very nice article
+
+Reply
+Alex:
+Jun 14/2013 1:28pm
+Thanks. I use your example when explaining Callbacks to those not familiar with it.
+
+Reply
+Hardik Sodha:
+Jun 21/2013 8:38am
+Good and easy to understand artical. Thanks for sharing.
+
+Reply
+Mr.Black:
+Jul 25/2013 1:06am
+Thank God!!. You saved me!!
+
+Great Tutorial that I’ve ever seen on javascript callback.
+Easy to understand. Impressive~!!
+
+Again, I really appreciate your GREAT Effort!!
+
+Reply
+Flavio:
+Aug 3/2013 10:22pm
+Hi Luis,
+
+I would like to know why a callback function such:
+
+$.get('view/template.html', function(d) {
+  tmpl = d;
+});
+Don’t works inside another function, as in the example bellow:
+
+function renderRecords(transaction, results) {
+
+  var tmpl;
+
+  $.get('view/template.html', function(d) {
+    alert(d);
+    tmpl = d;
+  });
+
+};
+On the above example the tmpl variable is never loaded, even knowing the “d” variable has the content, because it is shown in the alert box.
+
+I’ve worked around it calling “$.get” outside the scope of the function, to previously load the variable tmpl, and then use it inside the function, but I would like to understand what happened and why.
+
+Best Regards,
+
+Flavio
+
+Reply
+Louis Lazaris:
+Aug 19/2013 3:02pm
+I’m not sure… Can you set up a test JS Bin or something so I can see what you’re talking about? It seems to work fine for me:
+
+http://jsbin.com/eSUHija/1/edit
+
+But I’m not entirely sure if that’s how you want it structured…?
+
+Reply
+lost in scope:
+Sep 30/2013 3:32am
+var renderRecords = function(transaction, results) {
+  var tmpl;
+  var that = this;
+  $.get('view/template.html', function(d) {
+    alert(d);
+    that.tmpl = d;
+  });
+};
+Reply
+Łukasz:
+Aug 14/2013 12:28pm
+awesome post, read a few on this subject that didn’t make much sense. Guess more examples have to be about lunch :)
+
+Reply
+Gerd:
+Sep 24/2013 6:40pm
+Hello,
+
+great, well written article. But what do you do if your callback function is not only a function but a method of a certain object?
+How do you define (if necessary) and pass this object along with its callback method to your function?
+Reason for asking: I will have to call a function in a framework which demands a callback object. Inside this function, the callback object’s method onCompletion(param1,param2) will be called.
+How can I get hold of param1 and param2?
+
+Thank you very much in advance.
+
+Reply
+Louis Lazaris:
+Sep 24/2013 6:50pm
+I think you could just do something like this:
+
+// code here with function as method defined
+
+function mySandwich(param1, param2, callback) {
+  alert('Started eating my sandwich.\n\nIt has: ' + param1 + ', ' + param2);
+  callback(methodparam1, methodparam2);
+}
+
+mySandwich('ham', 'cheese', mainObject.callback(mp1, mp2) {
+  alert('Finished eating my sandwich.');
+});
+I might be wrong though, you’d have to test it. Notice I’ve added params for the callback reference. Again, I’m not 100% sure this is what you want, but in theory I believe this should work.
+
+Reply
+anon:
+May 8/2014 9:37am
+you can use a closure to pass the function with parameters
+
+function mySandwich(param1, param2, callback) {
+  alert('Started eating my sandwich.\n\nIt has: ' + param1 + ', ' + param2);
+  callback();
+}
+
+var var1 = "first argument";
+var var2= "second argurment";
+var mainObject = { callback: function(arg1, arg2) {
+    alert("arg1=" + arg1 + " and arg2=" + arg2);
+  }
+};
+
+mySandwich('ham', 'cheese', function() {
+  mainObject.callback(var1, var2);
+});
+Reply
+Manjunath:
+Sep 27/2013 8:32am
+You made my life easier.I found this place perfect to learn about CALLBACKS :)
+
+Reply
+Bruce:
+Oct 10/2013 7:18pm
+This was a great article – very clear, I now know how to use callbacks!
+
+Reply
+Prabodh Meshram:
+Oct 16/2013 4:38am
+Awesome Post man !!! helped me to pick up with the basics for the callback Concept. keep the great work Going !! Thanks
+
+Reply
+twstfy:
+Oct 16/2013 10:42pm
+Thanks. For some reason I was struggling with Javascript callbacks – this post cleared it up.
+
+Reply
+Titanio Verde:
+Nov 20/2013 1:19pm
+You have my thanks, too. Cleanest article to explain JS callbacks at the moment. That CallbackHell comment is also useful.
+
+Reply
+Gino:
+Dec 12/2013 10:50pm
+Thank you!
+
+Reply
+Anonymous:
+Feb 12/2014 7:02am
+Surely the clearest and simplest tutorial for callback() functions on the whole internet.
+I’m going to add your website in the “Must Read” zone of my Favourites! ;)
+
+Reply
+Siamak:
+Feb 25/2014 4:12pm
+Great article. Thanks, helped me.
+But for timing you can do it like this:
+
+var myFunc = function (name, time, callback) {
+  alert('hi '+name);
+  if(callback){ setTimeout(callback,time); }
+}
+myFunc('siamak', 200, function() {
+  alert('done');
+});
+Reply
+hugo:
+Apr 8/2014 11:32pm
+Wow I was so confused about callbacks and it really helped me. Thanks
+
+Reply
+neil:
+Apr 16/2014 9:14am
+I would agree that this is the best write-up I have seen regarding callbacks. However, now that I understand it better, why would you not just call the subsequent functions directly and remove the entire callback process. For instance, using callbacks I could process three steps with the following:
+
+function myfunction1() {
+  alert("We are in myfunction1");
+  myfunction2('ham1', 'cheese2', myfunction3); 
+}
+
+function myfunction2(param1, param2, callback) {  
+  alert("We are in myfunction2");
+  // Do some processing...
+  if (callback && typeof(callback) === "function") {
+    callback(); 
+  }
+}  
+
+function myfunction3() {
+  alert("We are done processing.");
+}
+However, why is this any different than the following?
+
+function myfunction1() {
+  alert("We are in myfunction1");
+  myfunction2('ham1', 'cheese2'); 
+}
+
+function myfunction2(param1, param2) {  
+  alert("We are in myfunction2");
+  // Do some processing...
+  myfunction3(); 
+}  
+
+function myfunction3() {
+  alert("We are done processing.");
+}
+I do see the possibility of changing the step sequence by dynamically changing the function calls using callbacks. But, if I want to process multiple functions in a certain sequence, why can’t I just call tham as explained above?
+
+Reply
+Louis Lazaris:
+Apr 16/2014 10:41am
+In my examples, I don’t think there is any difference from yours. Mainly, callbacks are beneficial when you’re dealing with processes that could ‘block’ other stuff from happening. See the explanation here:
+
+http://stackoverflow.com/questions/7070495/why-use-callback-in-javascript-what-are-its-advantages
+
+Callbacks are great when dealing with asynchronous actions (usually Ajax or animations), so you can still run other code on the page without blocking anything else, and when the asynchronous action completes, you’ll get a ‘notice’ when it’s done, via the callback.
+
+Probably I could write a separate article explaining this, because now that I look at my code above, it is pretty simple and isn’t exactly the ideal use case for callbacks.
+
+Reply
+neil:
+Apr 16/2014 11:10am
+Thanks, Louis! It was a good education for me.
+
+Reply
+Rafa:
+May 20/2014 9:43am
+Hi Louis,
+I’m learning Javascript and I’m getting crazy with a case.
+I´ve got some calls on my html code to a function just like this:
+‘ onclick=”fisrt(1)” onclick=”fisrt(2)” ‘ …
+
+And my js look like this:
+
+Function first(case) {
+  if (condition) {
+    second();
+    switch (case) {
+    case 1:
+      makesomethig();
+      break;
+    case 2:
+      makesomethigelse();
+      break;
+    }
+  } else {
+    makesomethingdifferent();
+  }
+}
+So I need function first() to wait function second() to finish if the condition is met.
+
+I hope you can help me and thanks in advanced.
+
+Reply
+Radovan Svedic:
+Nov 11/2014 9:23am
+Nice article.
+
+However, why wouldn’t one use the following approach:
+
+function mySandwich(param1, param2, callback) {
+  callback = typeof callback === 'function' ? callback : function() {};
+  ...
+  the rest of your code
+  ...
+it’s a bit annoying to have that line on top of every function expecting an optional callback but that way your callback calls are free of any also annoying checks for callback existence, wherever they may appear and regardless of how many times.
+
+Thoughts? Is there any good reason to avoid this construction?
+
+Reply
+Louis Lazaris:
+Nov 11/2014 7:43pm
+Your code is probably better. Generally, when I write JS, I’m a bit overly-precise on clarity of code. I find the code you used to be a bit confusing at first glance, so for tutorials (and even my own projects) I prefer a more explicit approach.
+
+But for sure, yours seems to be much more efficient, and I don’t see any problems with it. :)
+
+Reply
+saibaba:
+Nov 12/2014 2:42pm
+nice article ! its very clear to be understood by a beginner . Thank you !!
+
+Reply
+Ting:
+Mar 11/2015 1:22pm
+Very comprehensive post– I especially liked how you put HTML + jQuery + Callbacks together using the JSBin. It really helps me tie together how each of elements fit together :)
+
+Reply
+Tirthraj Barot:
+Mar 21/2015 7:55am
+How can we return values by callback functions?
+
+Reply
+Berguiga:
+Mar 24/2015 10:44am
+thank you for your post
+
+Reply
+John Crosskey:
+Aug 14/2015 5:31am
+Your post was a long time ago but I am extremely grateful for your clear and simple explanation of actually writing a callback function. I come from Pascal and Javascript is weird and exciting. I have listened to lectures by Douglas Crockford but the real clincher is the coder who says, here this is how you actually write it.
+
+Thanks
+
+Reply
+Ace:
+Sep 17/2015 4:03pm
+Hi,
+
+Many thanks for this article, I#m trying to get my iOS app to show imageName. This is my function
+
+function getImageURL(object, callback) {
+  var imageURL;
+  object.executeActionById("takeScreenshot");
+  object.onScreenshotReady(function(imageName) {
+    alert(imageName);
+    callback();
+  });
+};
+on iOS, i do:
+
+let script = "getImageURL(widget, function() { imageName })"
+let returnedResults = webView.stringByEvaluatingJavaScriptFromString(script)
+The function executes because the alert with the correct imageName appears.
+
+I just can’t get that name to my iOS app. iOS uses actually wants the last value in getImageURL and thats what results become.
+
+Reply
+Louis Lazaris:
+Sep 17/2015 10:47pm
+I don’t know the answer to your question. I’m not sure I fully understand it either. You might want to try StackOverflow or another similar forum.
+
+Reply
+Alex:
+Oct 19/2015 4:52pm
+Thank you!!! After reading so many sites about this topic, I finally found the one I needed to understand it.
+
+Reply
+Paul:
+Mar 1/2016 1:06pm
+good post! best one I have read on callbacks yet!
+
+Reply
+Shivani:
+Mar 3/2016 2:36am
+Awesome explanation,have searched whole web but this one cleared the basic concept of callback function.
+Thanks a ton :)
+
+Reply
+Allgreeen:
+Apr 7/2016 5:15am
+Perfect article !
+
+Reply
+Rohit:
+Jul 27/2016 3:28am
+Thanks a lot for this perfect article.
+
+Reply
+Allan:
+Sep 24/2016 9:23pm
+Good forum, I was sent here by OneSignal, I wanna try to make out the callback function in Javascript.
+Thanks since from now.
+Congratulations to all.
+
+Reply
+Jonathan:
+Dec 8/2016 9:29am
+Great post. Very clear explanation of callback
+
+Reply
+sandeep:
+Mar 23/2017 6:53am
+Nice but i need to return a result after completed web services calling. Please help me.
+
+Reply
+Leave a Reply
+Comment Rules: Please use a real name or alias. Keywords are not allowed in the "name" field. If you use keywords, your comment will be deleted, or your name will be replaced with the alias from your email address. No foul language, please. Thank you for cooperating.
+
+Instructions for code snippets: Wrap inline code in <code> tags; wrap blocks of code in <pre> and <code> tags. When you want your HTML to display on the page in a code snippet inside of <code> tags, make sure you use &lt; and &gt; instead of < and >, otherwise your code will be eaten by pink unicorns.
+
+
+Your Comment:
+ 
+Name *
+
+Mail (will not be published) *
+
+Website
+Submit Comment
+Follow Impressive Webs on Twitter
+ 
+Add Impressive Webs to your circles on Google+
+ 
+Get Updates in your RSS Reader
+ 
+Subscribe to Impressive Webs on YouTube
+ 
+Get Email Notifications for New Posts
+Advertise with Impressive Webs
+Cool Stuff & People I Like
+Codrops
+CSS Wizardry
+CSS-Tricks
+David Walsh Blog
+Estelle Weyl
+Grammar Girl
+HTML5 Rocks
+JavaScript
+Lea Verou
+MDN API Reference
+SitePoint
+Smashing Magazine
+Toronto Bookkeeping Services
+Webdesigner Depot
+Website Setup
+Website Setup
+Personal Stuff & Projects
+HTML5 & CSS3 Book
+Web Tools Weekly
+CSS Values
+Recommended Reading
+CSS Book for Beginners
+HTML9 Responsive Boilerstrap js
+CSS3 Click Chart
+Mostly Anti-Social
+
+Impressive Webs on Twitter
+ 
+Impressive Webs on GitHub
+ 
+Impressive Webs on YouTube
+ 
+Louis Lazaris on Google+
+Credits and Kudos
+
+BuySellAds.com
+ 
+WordPress
+ 
+Hosted by Media Temple
+ 
+Camtasia Studio
+Subscribe et al
+
+Twitter Feed
+Main RSS Feed
+Email Notifications
+The articles on here belong to me but feel free to use any of the code from the articles or tutorials for commercial projects, without attribution.
+Copyright © 2008 - 2017 Impressive Webs, Toronto
+Advertise | About | Contact
