@@ -6,6 +6,11 @@
   "scripts": {
     "test": "mocha"
   },
+ "devDependencies": {
+  "mocha": "latest",
+  "chai": "latest",
+  "chai-http": "latest"
+  },
   "author": "",
   "license": "ISC"
 }
