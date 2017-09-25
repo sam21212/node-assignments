@@ -11,19 +11,19 @@ mongoose.connect('mongodb://localhost/company');
 
 app.listen(3000, function() {
   console.log("The Node Server is running on port 3000");
-
 });
+
 require('./config/passport')(passport);
 
 app.use('/',
   passport.authenticate('bearer', { session: false }),
-  function(req, res, next) {
+  (req, res, next) => {
   	next();
 });
 
 require('./app/routes/project.js')(app);
 require('./app/routes/employee.js')(app);
 
-app.use(function(req, res) {
+app.use((req, res) => {
 	res.status(404).json({url:req.originalUrl + ' Not Found'});
 })

@@ -2,48 +2,47 @@ Employee = require('../controller/employeeController');
 Project = require('../controller/projectController');
 
 const errorHandler = require('../errorHandler'); 
-module.exports = function(app) {
-  app.post("/api/employees", function(req, res) {
-    Employee.addEmployee(req.body, function(err, employee) {
-      if (err) res.status(400).json(Employee.schema.obj);
+module.exports = (app) => {
+
+  app.post("/employees", (req, res) => {  
+    Employee.addEmployee(req.body, (err, employee) => {
+      if (err)  return res.status(400).json(Employee.schema.obj);
       res.status(200).json(employee);
     });
   });
 
-  app.get("/api/employees/:_id", function(req, res, next) {
-    Employee.getEmployeebyId(req.params._id, function(err, employee) {
+  app.get("/employees/:_id", (req, res) => {
+    Employee.getEmployeebyId(req.params._id, (err, employee) => {
+      if(employee === [])
+        return errorHandler.getMessage(err, req, res);
       if (err) return errorHandler.getMessage(err, req, res);
       res.status(200).json(employee);
     });
   });
 
-  app.put("/api/employees/:_id", function(req, res) {
-    Employee.findById(req.params._id, function(err, employee) {
-      if (err) return errorHandler.getMessage(err, req, res);
-      employee.set(req.body);
-      employee.save(function(err) {
-        if (err) res.status(400).json(Employee.schema.obj);     
-        res.status(200).json({ message: "updated Succesfully" });
-      });
+  app.put("/employees/:_id", (req, res) => {
+    Employee.update({_id: req.params._id}, req.body, (err, employee) => {
+      if(err) return errorHandler.getMessage(err, req, res);
+      res.status(200).send(employee);
     });
   });
 
-  app.get("/api/employees", function(req, res) {
-    Employee.getEmployees(function(err, employee) {
+  app.get("/employees", (req, res) => {
+    Employee.getEmployees((err, employee) => {
       if (err) throw err;
       res.status(200).json(employee);
     });
   });
 
-  app.delete("/api/employees/:_id", function(req, res) {
+  app.delete("/employees/:_id", (req, res) => {
     var id = req.params._id;
-    Employee.deleteEmployee(id, function(err) {
+    Employee.deleteEmployee(id, (err) => {
       if(err) return errorHandler.getMessage(err, req, res)
-        Project.update({'Developers': id}, {$pullAll: {'Developers': [id] }}, {multi: true}, function(err) {
+        Project.update({'developers': id}, {$pullAll: {'developers': [id] }}, {multi: true}, (err) => {
           if(err) throw err;
           console.log("Removed Employee from Projects");
         });
-        Employee.update({'Reporting_Manager': id}, {$set: {'Reporting_Manager': null}}, {multi: true}, function(err) {
+        Employee.update({'Reporting_Manager': id}, {$set: {'Reporting_Manager': null}}, {multi: true}, (err) => {
           if(err) throw err;
           console.log('Removed Employee as Repoting Manager');
         });

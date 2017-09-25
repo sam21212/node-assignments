@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 
-const employeeSchema = mongoose.Schema({
+const EmployeeSchema = mongoose.Schema({
   'name': {
     type: String,
     required: true
   },
-  'Reporting_Manager': { type: mongoose.Schema.Types.ObjectId }
+  'reporting_manager': { type: mongoose.Schema.Types.ObjectId }
 });
 
-var Employee = (module.exports = mongoose.model("Employee", employeeSchema));
+const Employee= mongoose.model("Employee", EmployeeSchema);
+module.exports = Employee;

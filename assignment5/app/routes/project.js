@@ -1,51 +1,49 @@
 Project = require('../controller/projectController');
 const errorHandler = require('../errorHandler'); 
 
-module.exports = function(app) {
+module.exports = (app) {
 
-  app.get("/api/projects", function(req, res) {
-    Project.getProjects(function(err, project) {
+  app.get("/projects", (req, res) => {
+    Project.getProjects((err, project) => {
       if (err) throw err;
       res.status(200).json(project);
     });
   });
 
-  app.post("/api/projects", function(req, res) {
-    Project.addProject(req.body, function(err, project) {
-      if (err) res.status(400).json(Project.schema.obj);      
+  app.post("/projects", (req, res) => {
+    Project.addProject(req.body, (err, project) => {
+      if (err) return res.status(400).json(Project.schema.obj);      
       res.status(200).json(project);
     });
   });
 
-  app.get("/api/projects/:_id", function(req, res) {
-    Project.getProjectById(req.params._id, function(err, project) {
+  app.get("/projects/:_id", (req, res) => {
+    Project.getProjectById(req.params._id, (err, project) => {
+      if(project === [])
+        return errorHandler.getMessage(err, req, res);
       if (err) return errorHandler.getMessage(err, req, res);
       res.status(200).json(project);
     });
   });
 
-  app.put("/api/projects/:_id", function(req, res) {
+  app.put("/projects/:_id", (req, res) => {
     var id = req.params._id;
-    Project.findById(req.params._id, function(err, project) {
-      if (err) return errorHandler.getMessage(err, req, res);
-      project.set(req.body);
-      project.save(function(err) {
-        if (err) res.status(400).json(Project.schema.obj);
-        res.status(200).json({ Message: "updated Succesfully" });
-      });
+    Project.update({_id: req.params._id}, req.body, (err, project) => {
+      if (err) return res.status(400).json(Project.schema.obj);
+      res.status(200).json({ Message: "updated Succesfully" });
     });
   });
 
-  app.get("/api/projects/:_id/employees", function(req, res) {
+  app.get("/projects/:_id/employees", (req, res) => {
     var result = [];
-    Project.getProjectDevelopers(req.params._id, function(err, project) {
+    Project.getProjectDevelopers(req.params._id, (err, project) => {
       if (err) return errorHandler.getMessage(err, req, res);
       res.status(200).json(project);
     });
   });
 
-  app.delete("/api/projects/:_id", function(req, res) {
-    Project.deleteProject(req.params._id, function(err) {
+  app.delete("/projects/:_id", (req, res) => {
+    Project.deleteProject(req.params._id, (err) => {
       if (err) return errorHandler.getMessage(err, req, res);
       res.status(200).json({ Message: "Deleted Project" });
     });

@@ -1,5 +1,6 @@
-const Token = (module.exports = require("../models/tokenModel"));
+const Token = require("../models/tokenModel");
+module.exports = Token;
 
-module.exports.findByToken = function(token, callback) {
+module.exports.findByToken = (token, callback) => {
 	Token.find({token: token}, callback);
 }
