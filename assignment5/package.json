@@ -1,0 +1,19 @@
+{
+  "name": "oauth",
+  "version": "1.0.0",
+  "description": "server.js",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "latest",
+    "express": "^4.15.4",
+    "mongoose": "latest",
+    "nodemon": "^1.12.0",
+    "passport": "^0.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
