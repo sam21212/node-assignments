@@ -209,13 +209,17 @@ const scramble = (cube, iteration) => {
   const attribute = ['row', 'col'];
 
   if(iteration == 0)
+  {
+    Cube.update({_id: cube._id}, cube) 
+      .catch();
     return;
+  }
   
   let randomAttributeNumber = getRandomArbitrary(0, 1);
   let randomNumber = getRandomArbitrary(1, 3);
   let randomDirection = getRandomArbitrary(0, 1);
   let body = changeConfiguration(attribute[randomAttributeNumber], randomNumber, cube, randomDirection);
-  Cube.update({_id: cube._id}, body)
+  Cube.update({_id: cube._id}, body, {new: true})
     .then(() => {
       scramble(cube, iteration - 1);
     })
@@ -240,7 +244,7 @@ export default class CubeController {
     Cube.create(body)
       .then(cube => {
         Responder.success(res, cube);
-        scramble(cube, 10);
+        scramble(cube, 5);
       })      
       .catch(err => Responder.operationFailed(res, new ServiceUnavailableError(err)));
   }
@@ -251,7 +255,7 @@ export default class CubeController {
       .then(player => {
         if(player === [])
           return Responder.operationFailed(res, new ParameterInvalidError('Id does not exist in database'));
-        Responder.success(res, player);
+        Responder.success(res, player.face);
       })
       .catch(err => Responder.operationFailed(res, new ParameterInvalidError('Invalid Id')));
   }
